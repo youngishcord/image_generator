@@ -71,6 +71,7 @@ class ImageGenerator(QMainWindow):
 
         self.create_bt = QtWidgets.QPushButton()
         self.create_bt.setText("Создать изображения")
+        self.create_bt.clicked.connect(self.create_images)
         self.lay.addWidget(self.create_bt)
 
     def set_figure_color(self):
@@ -97,10 +98,10 @@ class ImageGenerator(QMainWindow):
         for i in range(self.quantity):
             x1, x2 = (randint(0, 500), randint(0, 500))
             width, height = 600, 600
-            image = Image.new("RGB", (width, height), "white")
+            image = Image.new("RGB", (width, height), self.bg_color)
             draw = ImageDraw.Draw(image)
 
-            draw.rectangle([(x1, x2), (x1+100, x2+100)], fill="black", outline="black")
+            draw.rectangle([(x1, x2), (x1+100, x2+100)], fill=self.figure_color, outline=self.figure_color)
             
             image.save(f"./images/image_{i}.png")
 
