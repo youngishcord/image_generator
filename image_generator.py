@@ -10,6 +10,7 @@ from PySide6.QtCore import (Slot, Signal)
 
 
 class ImageGenerator(QMainWindow):
+    
     def __init__(self) -> None:
         QMainWindow.__init__(self)
         self.setFixedSize(QtCore.QSize(400, 600))
@@ -17,24 +18,37 @@ class ImageGenerator(QMainWindow):
         self.setCentralWidget(self.widget)
         self.lay = QtWidgets.QVBoxLayout(self.widget)
 
+        self.figure_type = QtWidgets.QComboBox()
+        self.figure_type.addItems(['Квадрат', 'Круг', 'Треугольник'])
+        self.lay.addWidget(self.figure_type)
+
         self.lay.addWidget(QLabel("Размер изображений"))
         self.image_size = (64, 64)
         self.x_size = QtWidgets.QSpinBox()
         self.x_size.setValue(self.image_size[0])
         self.x_size.setMinimum(1)
+        self.x_size.setMaximum(4096)
         self.x_size.valueChanged.connect(self.set_image_size)
         self.y_size = QtWidgets.QSpinBox()
         self.y_size.setValue(self.image_size[1])
         self.y_size.setMinimum(1)
+        self.y_size.setMaximum(4096)
         self.y_size.valueChanged.connect(self.set_image_size)
         size_lay = QtWidgets.QHBoxLayout()
         size_lay.addWidget(self.x_size)
         size_lay.addWidget(self.y_size)
         self.lay.addLayout(size_lay)
 
+        self.fixed_figure_size = QtWidgets.QCheckBox()
+        self.lay.addWidget(QLabel("Фиксированный размер фигуры"))
+        self.lay.addWidget(self.fixed_figure_size)
+        self.fixed_figure_size.setChecked(True)
+        self.fixed_figure_size.setEnabled(False) ################################################################################
+
         self.quantity = 10
         self.quantity_widget = QtWidgets.QSpinBox()
         self.quantity_widget.setMinimum(1)
+        self.quantity_widget.setValue(self.quantity)
         self.quantity_widget.valueChanged.connect(self.set_quantity)
         self.lay.addWidget(QLabel("Количество изображений"))
         self.lay.addWidget(self.quantity_widget)
@@ -93,15 +107,32 @@ class ImageGenerator(QMainWindow):
     def set_image_size(self):
         self.image_size = (self.x_size.value(), self.y_size.value())
 
+    def draw_square(self, draw: ImageDraw, x1, x2, delta):
+        draw.rectangle([(x1, x2), (x1+delta, x2+delta)], fill=self.figure_color, outline=self.figure_color)
+
+    def draw_circle(self, draw: ImageDraw, x1, x2, delta):
+        draw.ellipse([(x1, x2), (x1+delta, x2+delta)], fill=self.figure_color, outline=self.figure_color)
+
+    def draw_triangle(self):
+        pass
+
+    def get_func(self, *args):
+        types = {
+            'Квадрат': self.draw_square,
+            'Круг': self.draw_circle,
+            'Треугольник': self.draw_triangle,
+        }
+        return types[self.figure_type.currentText()](*args)
+
     # Нужны: размеры, количество, форма, цвет фона, цвет фигуры
     def create_images(self):
         for i in range(self.quantity):
-            x1, x2 = (randint(0, 500), randint(0, 500))
-            width, height = 600, 600
-            image = Image.new("RGB", (width, height), self.bg_color)
+            delta = 10**(len(str(min(self.image_size)))-1)
+            x1, x2 = (randint(0, self.image_size[0]-delta), randint(0, self.image_size[1]-delta))
+            image = Image.new("RGB", self.image_size, self.bg_color)
             draw = ImageDraw.Draw(image)
 
-            draw.rectangle([(x1, x2), (x1+100, x2+100)], fill=self.figure_color, outline=self.figure_color)
+            self.get_func(draw, x1, x2, delta)
             
             image.save(f"./images/image_{i}.png")
 
