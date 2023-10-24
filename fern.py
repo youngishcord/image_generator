@@ -1,6 +1,8 @@
 import cv2
 import random
 
+# Байесовский алгоритм 
+
 image = cv2.imread("./images/image_0.png", cv2.IMREAD_GRAYSCALE)
 
 h, w = image.shape
