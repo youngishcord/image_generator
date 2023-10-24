@@ -76,7 +76,7 @@ class ImageGenerator(QMainWindow):
         self.lay.addLayout(path_lay)
         self.path_line = QtWidgets.QLineEdit()
         self.path_line.setReadOnly(True)
-        self.path_line.setText("./")
+        # self.path_line.setText("./")
         path_lay.addWidget(self.path_line)
 
         self.path_bt = QtWidgets.QPushButton("Путь")
@@ -107,14 +107,17 @@ class ImageGenerator(QMainWindow):
     def set_image_size(self):
         self.image_size = (self.x_size.value(), self.y_size.value())
 
-    def draw_square(self, draw: ImageDraw, x1, x2, delta):
-        draw.rectangle([(x1, x2), (x1+delta, x2+delta)], fill=self.figure_color, outline=self.figure_color)
+    def draw_square(self, draw: ImageDraw, delta):
+        x, y = (randint(0, self.image_size[0]-delta), randint(0, self.image_size[1]-delta))
+        draw.rectangle([(x, y), (x+delta, y+delta)], fill=self.figure_color, outline=self.figure_color)
 
-    def draw_circle(self, draw: ImageDraw, x1, x2, delta):
-        draw.ellipse([(x1, x2), (x1+delta, x2+delta)], fill=self.figure_color, outline=self.figure_color)
+    def draw_circle(self, draw: ImageDraw, delta):
+        x, y = (randint(0, self.image_size[0]-delta), randint(0, self.image_size[1]-delta))
+        draw.ellipse([(x, y), (x+delta, y+delta)], fill=self.figure_color, outline=self.figure_color)
 
-    def draw_triangle(self):
-        pass
+    def draw_triangle(self, draw: ImageDraw, delta):
+        x, y = (randint(delta/2, self.image_size[0]-(delta/2)), randint(delta/2, self.image_size[1]-(delta/2)))
+        draw.polygon([(x, y-(delta/2)), (x-(delta/2), y+(delta/2)), (x+(delta/2), y+(delta/2))], fill=self.figure_color, outline=self.figure_color)
 
     def get_func(self, *args):
         types = {
@@ -126,15 +129,18 @@ class ImageGenerator(QMainWindow):
 
     # Нужны: размеры, количество, форма, цвет фона, цвет фигуры
     def create_images(self):
-        for i in range(self.quantity):
-            delta = 10**(len(str(min(self.image_size)))-1)
-            x1, x2 = (randint(0, self.image_size[0]-delta), randint(0, self.image_size[1]-delta))
-            image = Image.new("RGB", self.image_size, self.bg_color)
-            draw = ImageDraw.Draw(image)
+        if self.path_line.text():
+            for i in range(self.quantity):
+                
+                delta = 10**(len(str(min(self.image_size)))-1)
+                image = Image.new("RGB", self.image_size, self.bg_color)
+                draw = ImageDraw.Draw(image)
 
-            self.get_func(draw, x1, x2, delta)
-            
-            image.save(f"./images/image_{i}.png")
+                self.get_func(draw, delta)
+                
+                image.save(self.path_line.text() + f"/image_{i}.png")
+        else:
+            QtWidgets.QMessageBox.about(self, "Ошибка", "Укажите путь для сохранения")
 
 
 if __name__ == "__main__":
