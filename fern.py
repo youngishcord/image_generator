@@ -3,11 +3,11 @@ import random
 
 # Байесовский алгоритм 
 
-image = cv2.imread("./images/image_0.png", cv2.IMREAD_GRAYSCALE)
+image = cv2.imread("./images/squares/image_0.png", cv2.IMREAD_GRAYSCALE)
 
 h, w = image.shape
 
-pair_list = [[[random.randint(0, h-1), random.randint(0, w-1)], [random.randint(0, h-1), random.randint(0, w-1)]] for _ in range(20)]
+pair_list = [[[random.randint(0, h-1), random.randint(0, w-1)], [random.randint(0, h-1), random.randint(0, w-1)]] for _ in range(40)]
 
 vector = []
 

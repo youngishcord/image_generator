@@ -19,8 +19,8 @@ class ImageGenerator(QMainWindow):
         self.lay = QtWidgets.QVBoxLayout(self.widget)
 
         self.figure_type = QtWidgets.QComboBox()
-        self.figure_type.addItems(['Квадрат', 'Круг', 'Треугольник'])
-        self.lay.addWidget(self.figure_type)
+        self.figure_type.addItems(['Квадрат', 'Круг']) # , 'Треугольник'])
+        self.lay.addWidget(self.figure_type) 
 
         self.lay.addWidget(QLabel("Размер изображений"))
         self.image_size = (64, 64)
@@ -48,6 +48,7 @@ class ImageGenerator(QMainWindow):
         self.quantity = 10
         self.quantity_widget = QtWidgets.QSpinBox()
         self.quantity_widget.setMinimum(1)
+        self.quantity_widget.setMaximum(1000)
         self.quantity_widget.setValue(self.quantity)
         self.quantity_widget.valueChanged.connect(self.set_quantity)
         self.lay.addWidget(QLabel("Количество изображений"))
@@ -132,7 +133,8 @@ class ImageGenerator(QMainWindow):
         if self.path_line.text():
             for i in range(self.quantity):
                 
-                delta = 10**(len(str(min(self.image_size)))-1)
+                delta = round((min(self.image_size)/100)*60)  # 10**(len(str(min(self.image_size)))-1)
+                # print(delta)
                 image = Image.new("RGB", self.image_size, self.bg_color)
                 draw = ImageDraw.Draw(image)
 
