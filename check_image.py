@@ -6,12 +6,7 @@ import numpy as np
 
 random.seed(2)
 
-def get_vector(path: str, pair: int):
-    image = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
-
-    h, w = image.shape
-
-    pair_list = [[[random.randint(0, h-1), random.randint(0, w-1)], [random.randint(0, h-1), random.randint(0, w-1)]] for _ in range(pair)]
+def get_vector(image, pair: int, pair_list):
 
     vector = []
 
@@ -28,7 +23,11 @@ def get_vector(path: str, pair: int):
     return vector
 
 def analys(image_path):
-    vector = get_vector(image_path, 60)
+    image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
+    h, w = image.shape
+    pair = 200
+    pair_list = [[[random.randint(0, h-1), random.randint(0, w-1)], [random.randint(0, h-1), random.randint(0, w-1)]] for _ in range(pair)]
+    vector = get_vector(image, pair, pair_list)
 
     # print(vector)
 
@@ -37,17 +36,30 @@ def analys(image_path):
 
     sq, ci = [], []
 
+    print(vector)
+    
     for c, i in enumerate(vector):
         sq.append(square_class.iloc[c][str(i)])
         ci.append(circles_class.iloc[c][str(i)])
+
+    print(sq)
+    print(ci)
 
 
     a = np.prod(np.array(sq))
     b = np.prod(np.array(ci))
 
-    if a >= b:
-        print("Это ебаный SQUARE")
-    else:
-        print("Это ебучий CIRCLE")
+    q = 1
+    for i in ci:
+        q *= i
+    print(q)
+    print(a, b)
 
-analys(r"C:\Users\kulik\Desktop\py\polyvanov\images\squares\image_99.png")
+    if a > b:
+        print("Это ебаный SQUARE")
+    elif a < b:
+        print("Это ебучий CIRCLE")
+    else:
+        print("Это ебаная неопределенность")
+
+analys(f"./images/s/image_{41}.png")
