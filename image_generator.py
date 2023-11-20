@@ -39,11 +39,18 @@ class ImageGenerator(QMainWindow):
         size_lay.addWidget(self.y_size)
         self.lay.addLayout(size_lay)
 
+        self.lay.addWidget(QtWidgets.QLabel("Размер объекта на изображении в процентах"))
+        self.obj_size = QtWidgets.QSpinBox()
+        self.obj_size.setMinimum(1)
+        self.obj_size.setMaximum(99)
+        self.obj_size.setValue(80)
+        self.lay.addWidget(self.obj_size)
+
         self.fixed_figure_size = QtWidgets.QCheckBox()
         self.lay.addWidget(QLabel("Фиксированный размер фигуры"))
         self.lay.addWidget(self.fixed_figure_size)
         self.fixed_figure_size.setChecked(True)
-        self.fixed_figure_size.setEnabled(False) ################################################################################
+        self.fixed_figure_size.setEnabled(False)
 
         self.quantity = 10
         self.quantity_widget = QtWidgets.QSpinBox()
@@ -55,8 +62,8 @@ class ImageGenerator(QMainWindow):
         self.lay.addWidget(self.quantity_widget)
 
         grid = QtWidgets.QGridLayout()
-        grid.addWidget(QLabel("Цвет фона"), 0, 0)
-        grid.addWidget(QLabel("Цвет фигуры"), 0, 1)
+        grid.addWidget(QLabel("Цвет фона"), 0, 1)
+        grid.addWidget(QLabel("Цвет фигуры"), 0, 0)
 
         self.figure_color = "black"
         self.figure_color_widget = QtWidgets.QPushButton()
@@ -124,7 +131,7 @@ class ImageGenerator(QMainWindow):
         types = {
             'Квадрат': self.draw_square,
             'Круг': self.draw_circle,
-            'Треугольник': self.draw_triangle,
+            # 'Треугольник': self.draw_triangle,
         }
         return types[self.figure_type.currentText()](*args)
 
@@ -133,8 +140,7 @@ class ImageGenerator(QMainWindow):
         if self.path_line.text():
             for i in range(self.quantity):
                 
-                delta = round((min(self.image_size)/100)*60)  # 10**(len(str(min(self.image_size)))-1)
-                # print(delta)
+                delta = round((min(self.image_size)/100)*self.obj_size.value())
                 image = Image.new("RGB", self.image_size, self.bg_color)
                 draw = ImageDraw.Draw(image)
 

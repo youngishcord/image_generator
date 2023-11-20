@@ -35,14 +35,12 @@ def get_dataset(folder: str, descriptors: int):
     for image in dir_data:
         arr = list(map(sum, zip(arr, get_vector(folder+image, descriptors, pair_list))))
 
-    print(arr)
     df = pd.DataFrame({
         "0": [(len(dir_data) - a)/len(dir_data) for a in arr],
         "1": [a/len(dir_data) for a in arr]
     })
-    print(df[190:])
     
     df.to_csv("./dataset.csv", index=False)
     return
 
-get_dataset("./images/s/", 200)
+get_dataset("./images/squares/", 40)

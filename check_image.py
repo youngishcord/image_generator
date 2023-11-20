@@ -23,43 +23,38 @@ def get_vector(image, pair: int, pair_list):
     return vector
 
 def analys(image_path):
+    circles_class = pd.read_csv("./dataset_c.csv")
+    square_class = pd.read_csv("./dataset_s.csv")
+
+    if len(circles_class) != len(square_class):
+        print("количество дескрипторов классов неравно")
+        return
+
     image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
     h, w = image.shape
-    pair = 200
+    pair = len(circles_class)
     pair_list = [[[random.randint(0, h-1), random.randint(0, w-1)], [random.randint(0, h-1), random.randint(0, w-1)]] for _ in range(pair)]
     vector = get_vector(image, pair, pair_list)
 
     # print(vector)
 
-    square_class = pd.read_csv("./dataset_s.csv")
-    circles_class = pd.read_csv("./dataset_c.csv")
-
     sq, ci = [], []
-
-    print(vector)
     
     for c, i in enumerate(vector):
         sq.append(square_class.iloc[c][str(i)])
         ci.append(circles_class.iloc[c][str(i)])
 
-    print(sq)
-    print(ci)
-
-
     a = np.prod(np.array(sq))
     b = np.prod(np.array(ci))
 
-    q = 1
-    for i in ci:
-        q *= i
-    print(q)
-    print(a, b)
-
     if a > b:
-        print("Это ебаный SQUARE")
+        print("Это SQUARE")
+        return "s"
     elif a < b:
-        print("Это ебучий CIRCLE")
+        print("Это CIRCLE")
+        return "c"
     else:
-        print("Это ебаная неопределенность")
+        print("Это неопределенность")
 
-analys(f"./images/s/image_{41}.png")
+
+analys(f"./images/for_check_c/")
